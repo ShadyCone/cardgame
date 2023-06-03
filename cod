@@ -1,0 +1,126 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Scanner;
+
+public class CardGame {
+    
+    private List<Card> deck;
+    private List<Card> player1;
+    private List<Card> player2;
+    
+    public static void main(String[] args) {
+        CardGame game = new CardGame();
+        game.play();
+    }
+    
+    public CardGame() {
+        deck = new ArrayList<Card>();
+        player1 = new ArrayList<Card>();
+        player2 = new ArrayList<Card>();
+        
+        // Create the deck of cards
+        for (Suit suit : Suit.values()) {
+            for (Rank rank : Rank.values()) {
+                deck.add(new Card(suit, rank));
+            }
+        }
+        
+        // Shuffle the deck
+        Collections.shuffle(deck);
+        
+        // Deal cards to players
+        for (int i = 0; i < 6; i++) {
+            player1.add(deck.remove(0));
+            player2.add(deck.remove(0));
+        }
+    }
+    
+    public void play() {
+        Scanner scanner = new Scanner(System.in);
+        int turn = 1;
+        while (!player1.isEmpty() && !player2.isEmpty()) {
+            System.out.println("Player " + turn + "'s turn.");
+            System.out.println("Your hand: " + getHand(turn));
+            System.out.println("Choose a card to play: ");
+            int cardIndex = scanner.nextInt();
+            Card card = getCard(turn, cardIndex);
+            playCard(turn, card);
+            turn = (turn == 1) ? 2 : 1;
+        }
+        System.out.println("Game over.");
+        if (player1.isEmpty()) {
+            System.out.println("Player 2 wins!");
+        } else {
+            System.out.println("Player 1 wins!");
+        }
+    }
+    
+    public String getHand(int player) {
+        StringBuilder sb = new StringBuilder();
+        List<Card> hand = (player == 1) ? player1 : player2;
+        for (int i = 0; i < hand.size(); i++) {
+            sb.append(i).append(": ").append(hand.get(i)).append("\n");
+        }
+        return sb.toString();
+    }
+    
+    public Card getCard(int player, int index) {
+        List<Card> hand = (player == 1) ? player1 : player2;
+        return hand.get(index);
+    }
+    
+    public void playCard(int player, Card card) {
+        List<Card> hand = (player == 1) ? player1 : player2;
+        hand.remove(card);
+        System.out.println("Player " + player + " plays " + card);
+    }
+    
+    
+    private class Card {
+        private final Suit suit;
+        private final Rank rank;
+        
+        public Card(Suit suit, Rank rank) {
+            this.suit = suit;
+            this.rank = rank;
+        }
+        
+        public Suit getSuit() {
+            return suit;
+        }
+        
+        public Rank getRank() {
+            return rank;
+        }
+        
+        public String toString() {
+            return rank + " of " + suit;
+        }
+    }
+    
+    
+    private enum Suit {
+        CLUBS,
+        DIAMONDS,
+        HEARTS,
+        SPADES
+    }
+    
+    
+    private enum Rank {
+        ACE,
+        TWO,
+        THREE,
+        FOUR,
+        FIVE,
+        SIX,
+        SEVEN,
+        EIGHT,
+        NINE,
+        TEN,
+        JACK,
+        QUEEN,
+        KING
+    }
+}
